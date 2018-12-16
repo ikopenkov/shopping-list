@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "es5",
+        "jsx": "react",
+        "baseUrl": ".",
+        "experimentalDecorators": true,
+        "paths": {
+            "src/*": ["src/*"],
+            "components/*": ["src/components/*"],
+            "containers/*": ["src/containers/*"],
+            "reducers/*": ["src/reducers/*"],
+            "modules/*": ["src/modules/*"],
+            "actions/*": ["src/actions/*"],
+            "assets/*": ["src/assets/*"],
+            "utils/*": ["src/utils/*"],
+            "api/*": ["src/api/*"]
+        },
+        "lib": ["dom", "es5", "es6", "es7", "esnext"],
+        "typeRoots": ["node_modules/@types", "custom_typings"]
+    },
+    "include": ["./**/*"],
+    "exclude": ["node_modules", "dist"]
+}
