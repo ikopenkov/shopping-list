@@ -1,7 +1,9 @@
-import * as path from 'path';
 import { HotModuleReplacementPlugin, Configuration } from 'webpack';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as CleanWebpackPlugin from 'clean-webpack-plugin';
+import createStyledComponentsTransformer from 'typescript-plugin-styled-components';
+
+const styledComponentsTransformer = createStyledComponentsTransformer();
 
 const config: Configuration = {
   mode: 'development',
@@ -36,7 +38,15 @@ const config: Configuration = {
 
   module: {
     rules: [
-      { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
+      {
+        test: /\.tsx?$/,
+        loader: 'awesome-typescript-loader',
+        options: {
+          getCustomTransformers: () => ({
+            before: [styledComponentsTransformer],
+          }),
+        },
+      },
 
       {
         test: /\.css$/,

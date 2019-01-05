@@ -4,25 +4,55 @@ import { Provider } from 'react-redux';
 import { AppRouter } from './appRouter';
 import { store } from 'src/store';
 import { createGlobalStyle } from 'styled-components';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import { Colors } from 'src/constants/Colors';
 
 const reactContainer = document.createElement('div');
 reactContainer.className = 'app';
 document.body.appendChild(reactContainer);
 
 const GlobalStyle = createGlobalStyle`
+  html {
+     height: 100%;
+  }
+
   body {
     font-size: 14px;
     font-family: Arial;
     margin: 0;
+    height: 100%;
+  }
+  
+  * {
+    box-sizing: border-box;
+    word-break: break-word;
+  }
+  
+  .app {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 `;
 
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: Colors.primaryBg, contrastText: Colors.white },
+    error: {
+      main: Colors.dangerBg,
+      contrastText: Colors.white
+    },
+    
+  },
+  typography: { useNextVariants: true },
+});
+
 ReactDOM.render(
   <Provider store={store}>
-    <React.Fragment>
+    <MuiThemeProvider theme={theme}>
       <GlobalStyle />
       <AppRouter />
-    </React.Fragment>
+    </MuiThemeProvider>
   </Provider>,
   reactContainer,
 );

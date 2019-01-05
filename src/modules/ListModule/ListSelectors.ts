@@ -25,7 +25,7 @@ const getItem = (state: GlobalState, id: string) =>
 const getItemExtended = R.pipe(
   getItem,
   item => {
-    return {
+    return item && {
       ...item,
       customFields: {
         createdAtMoment: moment(item.createdAt),

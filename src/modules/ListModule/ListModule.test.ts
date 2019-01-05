@@ -201,7 +201,7 @@ describe('ListModule', () => {
     ).toMatchObject(createdListWithUpdatedPurchase);
   });
 
-  it('updates purchase', async () => {
+  it('deletes purchase', async () => {
     const {
       createdListWithPurchase,
       createdPurchase,
@@ -215,7 +215,7 @@ describe('ListModule', () => {
         },
       },
     });
-
+  
     TestUtils.mockFetch({});
 
     await store.dispatch(

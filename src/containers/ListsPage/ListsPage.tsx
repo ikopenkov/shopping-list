@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { GlobalState } from 'reducers/rootReducer';
-import { ListModuleState } from 'modules/ListModule/ListModuleTypes';
 import { ListExtended, ListSelectors } from 'modules/ListModule/ListSelectors';
 import { ListActions } from 'modules/ListModule/ListActions';
-import { Types } from 'utils/Types';
-import { connect, Dispatch, MapStateToProps } from 'react-redux';
-import * as R from 'ramda';
+import { connect, Dispatch } from 'react-redux';
 import { Action, bindActionCreators } from 'redux';
-import { TypeOfConnect, unboxThunk } from 'utils/ReduxUtils';
-import { ListEntry } from 'api/ListApi/ListApiTypes';
-import styled, { css } from 'styled-components';
+import { TypeOfConnect } from 'utils/ReduxUtils';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { ListRow } from 'components/StyledComponents/ListRow';
 
 const connector = connect(
   (state: GlobalState) => ({
@@ -43,8 +40,8 @@ class Component extends React.PureComponent<Props> {
 
   private renderItem = (item: ListExtended) => {
     return (
-      <StyledLink to={`/lists/${item._id}`}>
-        <Item key={item._id}>
+      <StyledLink key={item._id} to={`/lists/${item._id}`}>
+        <ListRow as="button">
           <ItemName value={item.name} disabled={!this.state.editMode} />
           <AttributesContainer>
             <Attribute>{item.purchases.length} items</Attribute>
@@ -52,7 +49,7 @@ class Component extends React.PureComponent<Props> {
               {item.customFields.createdAtMoment.format('DD.MM.YYYY HH:mm')}
             </Attribute>
           </AttributesContainer>
-        </Item>
+        </ListRow>
       </StyledLink>
     );
   };
@@ -73,24 +70,12 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-const Item = styled.button`
-  border: 0;
-  outline: none;
-  border-bottom: 1px solid lightgray;
-  padding: 5px 10px;
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-  background-color: transparent;
-`;
-
 const ItemName = styled.input`
   border: 0;
   font-size: 14px;
   flex: 1 1 auto;
   outline: none;
   margin-right: 10px;
-  
 
   :disabled {
     color: #000;
@@ -100,11 +85,16 @@ const ItemName = styled.input`
   }
 `;
 
-const AttributesContainer = styled.div``;
+const AttributesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
 const Attribute = styled.div`
   font-size: 12px;
+  line-height: 14px;
   color: dimgray;
-  text-align:right;
+  text-align: right;
 `;
 
 const ItemsList = styled.div`

@@ -29,6 +29,9 @@ export const ApiCaller = {
     const response = await fetch(url, {
       body: body ? JSON.stringify(body) : undefined,
       method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     if (response.status >= 200 && response.status < 300) {
