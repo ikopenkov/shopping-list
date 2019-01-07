@@ -17,7 +17,7 @@ const connector = connect(
   (dispatch: Dispatch<Action>) =>
     bindActionCreators(
       {
-        loadItems: ListActions.loadItems,
+        loadItems: ListActions.loadItemsSavingState,
       },
       dispatch,
     ),

@@ -2,10 +2,11 @@ import * as React from 'react';
 import { ReactNode } from 'react';
 import { styled } from 'components/StyledComponents/StyledComponents';
 import { ListRow } from 'components/StyledComponents/ListRow';
-import { withSize } from 'react-sizeme';
-import { TypeOfConnect } from 'utils/ReduxUtils';
+// import { withSize } from 'react-sizeme';
+// import { TypeOfConnect } from 'utils/ReduxUtils';
+import Button, { ButtonProps } from '@material-ui/core/Button';
 
-type ButtonProps = {
+type ActionButtonProps = {
   color: string;
   backgroundColor: string;
   content: string | ReactNode;
@@ -14,8 +15,8 @@ type ButtonProps = {
 
 type OwnProps = {
   children: ReactNode;
-  rightButtonProps?: ButtonProps;
-  leftButtonProps?: ButtonProps;
+  rightButtonProps?: ActionButtonProps;
+  leftButtonProps?: ActionButtonProps;
 };
 
 type State = {
@@ -28,10 +29,10 @@ type PointerEventHandler<T = void> = (
   event: React.PointerEvent<HTMLDivElement>,
 ) => T;
 
-const sizeConnector = withSize<OwnProps>({ monitorHeight: true });
-type Props = TypeOfConnect<typeof sizeConnector>;
+// const sizeConnector = withSize<OwnProps>({ monitorHeight: true });
+// type Props = TypeOfConnect<typeof sizeConnector>;
 
-class Component extends React.PureComponent<Props, State> {
+class Component extends React.PureComponent<OwnProps, State> {
   state: State = {
     x: 0,
     isSwiping: false,
@@ -107,30 +108,31 @@ class Component extends React.PureComponent<Props, State> {
           x={this.state.x}
           isSwiping={this.state.isSwiping}
         >
-          {this.props.children}
+          <TriggerButton>{this.props.children}</TriggerButton>
         </Trigger>
 
         {this.props.leftButtonProps && this.state.x > 0 && (
-          <Button {...this.props.leftButtonProps} align={'left'}>
+          <ActionButton {...this.props.leftButtonProps} align={'left'}>
             {this.state.isActionPerforming
               ? 'Loading...'
               : this.props.leftButtonProps.content}
-          </Button>
+          </ActionButton>
         )}
 
         {this.props.rightButtonProps && this.state.x < 0 && (
-          <Button {...this.props.rightButtonProps} align={'right'}>
+          <ActionButton {...this.props.rightButtonProps} align={'right'}>
             {this.state.isActionPerforming
               ? 'Loading...'
               : this.props.rightButtonProps.content}
-          </Button>
+          </ActionButton>
         )}
       </Wrapper>
     );
   }
 }
 
-export const SwipeActions = sizeConnector(Component);
+// export const SwipeActions = sizeConnector(Component);
+export const SwipeActions = Component;
 
 const Wrapper = styled('div')`
   width: 100%;
@@ -139,12 +141,12 @@ const Wrapper = styled('div')`
   position: relative;
 `;
 
-const Trigger = styled('div').attrs({
-  style: (props: any) => ({
-    transform: `translateX(${props.x}px)`,
-  }),
-})<{ x: number; isSwiping: boolean }>`
-  touch-action: none;
+type TriggerStyleProps = { x: number; isSwiping: boolean };
+
+const Trigger = styled('div').attrs<TriggerStyleProps>(props => ({
+  transform: `translateX(${props.x}px)`,
+}))<TriggerStyleProps>`
+  touch-action: pan-y;
   transition: ${props => (props.isSwiping ? 'none' : '0.1s')};
   width: 100%;
   height: 100%;
@@ -153,8 +155,18 @@ const Trigger = styled('div').attrs({
   background-color: #fff;
 `;
 
-const Button = styled(ListRow)<
-  ButtonProps & { align: 'left' | 'right' }
+const TriggerButton = styled(Button as React.FunctionComponent<ButtonProps>)`
+  && {
+    border-radius: 0;
+    width: 100%;
+    text-align: left;
+    text-transform: none;
+    padding: 0;
+  }
+`;
+
+const ActionButton = styled(ListRow)<
+  Pick<ActionButtonProps, 'color' | 'backgroundColor'> & { align: 'left' | 'right' }
 >`
   background-color: ${props => props.backgroundColor};
   color: ${props => props.color};

@@ -13,11 +13,9 @@ const createItem = (
 ): ThunkResult<Promise<ListEntry>> => async (dispatch, getState) => {
   const listEntry = await ListApi.createItem(list);
 
-  const purchaseEntries = await Promise.all(
+  listEntry.purchases = await Promise.all(
     purchases.map(purchase => PurchaseApi.createItem(listEntry._id, purchase)),
   );
-
-  listEntry.purchases = purchaseEntries;
 
   dispatch(_setItem(listEntry));
 
@@ -73,6 +71,39 @@ const loadItems = (): ThunkResult<Promise<ListEntry[]>> => async (
   return items;
 };
 
+const updateItems = (): ThunkResult<Promise<ListEntry[]>> => async (
+  dispatch,
+  getState,
+) => {
+  let items;
+  try {
+    items = await ListApi.loadItems();
+  } catch (error) {
+    console.error('failed to load lists', error);
+    throw error;
+  }
+
+  dispatch(
+    module.setModuleState({
+      items,
+    }),
+  );
+
+  return items;
+};
+
+const loadItemsSavingState = (): ThunkResult<Promise<ListEntry[]>> => async (
+  dispatch,
+  getState,
+) => {
+  const { isLoaded, isLoading } = ListSelectors.getModuleState(getState());
+  if (!isLoaded && !isLoading) {
+    return dispatch(loadItems());
+  } else {
+    return dispatch(updateItems());
+  }
+};
+
 const loadItem = (id: string): ThunkResult<Promise<ListEntry>> => async (
   dispatch,
   getState,
@@ -84,10 +115,10 @@ const loadItem = (id: string): ThunkResult<Promise<ListEntry>> => async (
   return item;
 };
 
-const updateItem = (id: string, updatingList: Partial<CreatingList>): ThunkResult<Promise<ListEntry>> => async (
-  dispatch,
-  getState,
-) => {
+const updateItem = (
+  id: string,
+  updatingList: Partial<CreatingList>,
+): ThunkResult<Promise<ListEntry>> => async (dispatch, getState) => {
   const item = await ListApi.updateItem(id, updatingList);
   console.log(item);
   dispatch(_setItem(item));
@@ -95,11 +126,12 @@ const updateItem = (id: string, updatingList: Partial<CreatingList>): ThunkResul
   return item;
 };
 
-const _setItem = (
-  item: ListEntry,
-): ThunkResult<ListEntry[]> => (dispatch, getState) => {
+const _setItem = (item: ListEntry): ThunkResult<ListEntry[]> => (
+  dispatch,
+  getState,
+) => {
   const items = <ListEntry[]>dispatch(ModuleHelper.setItem(item, module));
-
+  
   dispatch(
     module.setModuleState({
       items,
@@ -164,6 +196,7 @@ export const ListActions = {
   updateItem,
   deleteItem,
   loadItems,
+  loadItemsSavingState,
   loadItem,
   createPurchase,
   updatePurchase,

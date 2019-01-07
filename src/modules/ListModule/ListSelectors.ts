@@ -6,6 +6,7 @@ import { ModuleHelper } from 'utils/ModuleHelper';
 import { ListModuleState } from 'modules/ListModule/ListModuleTypes';
 import * as moment from 'moment';
 import { GetFunctionResult } from 'utils/ReduxUtils';
+import { PurchaseEntry } from 'api/PurchaseApi/PurchaseApiTypes';
 
 const getModuleState = ModuleHelper.makeSelector<ListModuleState>(listModule);
 
@@ -25,13 +26,15 @@ const getItem = (state: GlobalState, id: string) =>
 const getItemExtended = R.pipe(
   getItem,
   item => {
-    return item && {
-      ...item,
-      customFields: {
-        createdAtMoment: moment(item.createdAt),
-        updatedAtMoment: moment(item.updatedAt),
-      },
-    };
+    return (
+      item && {
+        ...item,
+        customFields: {
+          createdAtMoment: moment(item.createdAt),
+          updatedAtMoment: moment(item.updatedAt),
+        },
+      }
+    );
   },
 );
 
@@ -48,6 +51,13 @@ const getItemsExtendedSorted = R.pipe(
   R.sortBy(R.prop('updatedAt')),
 );
 
+const getPurchase = (state: GlobalState, listId: string, purchaseId: string) =>
+  R.pipe(
+    getItemExtended,
+    R.prop('purchases'),
+    R.find<PurchaseEntry>(R.propEq('_id', purchaseId)),
+  )(state, listId);
+
 export const ListSelectors = {
   getModuleState,
 
@@ -56,8 +66,10 @@ export const ListSelectors = {
   getIsLoaded,
   getIsLoading,
   getHasError,
-  
+
   getItemExtended,
   getItemsExtended,
   getItemsExtendedSorted,
+
+  getPurchase,
 };

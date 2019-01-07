@@ -3,18 +3,15 @@ import { GlobalState } from 'reducers/rootReducer';
 import { ListActions } from 'modules/ListModule/ListActions';
 import { connect, Dispatch } from 'react-redux';
 import { Action, bindActionCreators } from 'redux';
-import { TypeOfConnect, unboxThunk } from 'utils/ReduxUtils';
+import { TypeOfConnect } from 'utils/ReduxUtils';
 import styled from 'styled-components';
 import { RouteComponentProps } from 'react-router-dom';
 import { AppBar } from 'containers/AppBar/AppBar';
 import { Loader } from 'components/Loader/Loader';
 import { Purchase } from 'containers/ListPage/Components/Purchase';
-import { ListRow } from 'components/StyledComponents/ListRow';
 import { ListSelectors } from 'modules/ListModule/ListSelectors';
-// import { Types } from 'utils/Types';
-// import * as R from 'ramda';
-// import { ListEntry } from 'api/ListApi/ListApiTypes';
-// import { ListModuleState } from 'modules/ListModule/ListModuleTypes';
+import { PurchaseAddingForm } from 'containers/PurchaseAddingForm/PurchaseAddingForm';
+// import { PurchaseEditingDialog } from 'containers/PurchaseEditingDialog/PurchaseEditingDialog';
 
 type OwnProps = RouteComponentProps<{ id: string }> & {};
 
@@ -26,7 +23,7 @@ const connector = connect(
   (dispatch: Dispatch<Action>) =>
     bindActionCreators(
       {
-        loadItems: ListActions.loadItems,
+        loadItems: ListActions.loadItemsSavingState,
         deletePurchase: ListActions.deletePurchase,
         updatePurchase: ListActions.updatePurchase,
       },
@@ -37,7 +34,7 @@ const connector = connect(
 type Props = {} & OwnProps & TypeOfConnect<typeof connector>;
 
 class Component extends React.PureComponent<Props> {
-  componentDidMount(): void {
+  componentDidMount() {
     this.props.loadItems();
   }
 
@@ -65,19 +62,20 @@ class Component extends React.PureComponent<Props> {
         <div>Shopping list with id {this.props.match.params.id} not found</div>
       );
     }
-
     return (
       <React.Fragment>
-        <ListRow>
-        
-        </ListRow>
+        <PurchaseAddingForm listId={this.props.item._id} />
         {this.renderPurchases()}
+        {/*<PurchaseEditingDialog*/}
+        {/*listId={this.props.item._id}*/}
+        {/*purchaseId={this.props.item.purchases[0]._id}*/}
+        {/*/>*/}
       </React.Fragment>
     );
   };
 
-  private renderPurchases = () =>
-    this.props.item.purchases.map(purchase => (
+  private renderPurchases = () => {
+    return this.props.item.purchases.map(purchase => (
       <Purchase
         purchase={purchase}
         key={purchase._id}
@@ -96,6 +94,7 @@ class Component extends React.PureComponent<Props> {
         }
       />
     ));
+  };
 
   render() {
     return (
@@ -114,47 +113,3 @@ const Page = styled.div`
   flex-direction: column;
   flex: 1 1 auto;
 `;
-
-// const ListName = styled.h2`
-//   font-size: 16px;
-//   font-weight: bold;
-//   padding: 10px;
-//   background-color: #eee;
-// `;
-//
-// const Item = styled.button`
-//   border: 0;
-//   outline: none;
-//   border-bottom: 1px solid lightgray;
-//   padding: 5px 10px;
-//   display: flex;
-//   align-items: stretch;
-//   width: 100%;
-//   background-color: transparent;
-// `;
-//
-// const ItemName = styled.input`
-//   border: 0;
-//   font-size: 14px;
-//   flex: 1 1 auto;
-//   outline: none;
-//   margin-right: 10px;
-//
-//   :disabled {
-//     color: #000;
-//   }
-//
-//   :focus {
-//   }
-// `;
-//
-// const AttributesContainer = styled.div``;
-// const Attribute = styled.div`
-//   font-size: 12px;
-//   color: dimgray;
-//   text-align: right;
-// `;
-//
-// const ItemsList = styled.div`
-//   border-top: 1px solid lightgray;
-// `;

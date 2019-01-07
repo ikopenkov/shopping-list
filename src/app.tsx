@@ -18,7 +18,6 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-size: 14px;
-    font-family: Arial;
     margin: 0;
     height: 100%;
   }
@@ -26,6 +25,7 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
     word-break: break-word;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   }
   
   .app {
@@ -38,6 +38,10 @@ const GlobalStyle = createGlobalStyle`
 const theme = createMuiTheme({
   palette: {
     primary: { main: Colors.primaryBg, contrastText: Colors.white },
+    secondary: {
+      main: Colors.dangerBgLight,
+      contrastText: Colors.white
+    },
     error: {
       main: Colors.dangerBg,
       contrastText: Colors.white

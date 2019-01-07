@@ -5,6 +5,9 @@ import { ListRow } from 'components/StyledComponents/ListRow';
 import { SwipeActions } from 'components/SwipeActions/SwipeActions';
 import { Colors } from 'src/constants/Colors';
 import { Truncated } from 'components/StyledComponents/Truncated';
+import DeleteIcon from '@material-ui/icons/DeleteOutline';
+import DoneIcon from '@material-ui/icons/Done';
+import UndoIcon from '@material-ui/icons/Undo';
 
 export const Purchase = ({
   purchase,
@@ -23,7 +26,7 @@ export const Purchase = ({
         rightButtonProps={{
           color: Colors.white,
           backgroundColor: Colors.dangerBg,
-          content: 'Remove',
+          content: <DeleteIcon />,
           action: deletePurchase,
         }}
         leftButtonProps={{
@@ -31,13 +34,13 @@ export const Purchase = ({
           backgroundColor: purchase.bought
             ? Colors.warningBg
             : Colors.successBg,
-          content: purchase.bought ? 'Unmark bought' : 'Mark bought',
+          content: purchase.bought ? <UndoIcon /> : <DoneIcon />,
           action: purchase.bought ? unmarkBought : markBought,
         }}
       >
         <PurchaseContent bought={purchase.bought}>
           <Name>{purchase.name}</Name>
-          <Number>{purchase.number}</Number>
+          {purchase.number > 1 && <Number>{purchase.number}</Number>}
         </PurchaseContent>
       </SwipeActions>
     </PurchaseWrapper>
@@ -60,10 +63,10 @@ const PurchaseContent = styled(ListRow)`
 
 const Name = styled(Truncated)`
   flex: 1 1 auto;
-  margin-right: 10px;
 `;
 
 const Number = styled.div`
   flex: 0 0 auto;
   margin-left: auto;
+  padding-left: 10px;
 `;

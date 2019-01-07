@@ -3,7 +3,7 @@ export const Colors = {
 
   defaultBg: '#999999',
 
-  dangerBg: '#f44336',
+  dangerBg: '#bb4430',
   infoBg: '#ddccbc',
   successBg: '#5bb372',
   primaryBg: '#7ebdc2',
