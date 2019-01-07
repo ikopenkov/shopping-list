@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import {MainPage} from "containers/MainPage/MainPage";
 import { ListsPage } from 'containers/ListsPage/ListsPage';
 import { ListPage } from 'containers/ListPage/ListPage';

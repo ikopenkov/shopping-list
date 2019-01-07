@@ -5,6 +5,8 @@ import { ListRow } from 'components/StyledComponents/ListRow';
 // import { withSize } from 'react-sizeme';
 // import { TypeOfConnect } from 'utils/ReduxUtils';
 import Button, { ButtonProps } from '@material-ui/core/Button';
+import { CircularProgress } from '@material-ui/core';
+import { CircularProgressProps } from '@material-ui/core/CircularProgress';
 
 type ActionButtonProps = {
   color: string;
@@ -17,6 +19,7 @@ type OwnProps = {
   children: ReactNode;
   rightButtonProps?: ActionButtonProps;
   leftButtonProps?: ActionButtonProps;
+  onClick: <T = any>() => T;
 };
 
 type State = {
@@ -97,10 +100,35 @@ class Component extends React.PureComponent<OwnProps, State> {
     return deltaX;
   };
 
+  private renderActionButton = (
+    props: ActionButtonProps,
+    position: 'left' | 'right',
+  ) => {
+    const shouldRender =
+      position === 'left' ? this.state.x > 0 : this.state.x < 0;
+
+    if (shouldRender) {
+      return (
+        <ActionButton
+          backgroundColor={props.backgroundColor}
+          color={props.color}
+          align={position}
+        >
+          {this.state.isActionPerforming ? (
+            <StyledCircularProgress colorStyle={props.color} />
+          ) : (
+            props.content
+          )}
+        </ActionButton>
+      );
+    }
+  };
+
   render() {
     return (
       <Wrapper>
         <Trigger
+          onClick={this.props.onClick}
           onPointerDown={this.handlePointerDown}
           onPointerUp={this.handlePointerUp}
           onPointerCancel={this.handlePointerUp}
@@ -111,21 +139,10 @@ class Component extends React.PureComponent<OwnProps, State> {
           <TriggerButton>{this.props.children}</TriggerButton>
         </Trigger>
 
-        {this.props.leftButtonProps && this.state.x > 0 && (
-          <ActionButton {...this.props.leftButtonProps} align={'left'}>
-            {this.state.isActionPerforming
-              ? 'Loading...'
-              : this.props.leftButtonProps.content}
-          </ActionButton>
-        )}
-
-        {this.props.rightButtonProps && this.state.x < 0 && (
-          <ActionButton {...this.props.rightButtonProps} align={'right'}>
-            {this.state.isActionPerforming
-              ? 'Loading...'
-              : this.props.rightButtonProps.content}
-          </ActionButton>
-        )}
+        {this.props.leftButtonProps &&
+          this.renderActionButton(this.props.leftButtonProps, 'left')}
+        {this.props.rightButtonProps &&
+          this.renderActionButton(this.props.rightButtonProps, 'right')}
       </Wrapper>
     );
   }
@@ -144,7 +161,9 @@ const Wrapper = styled('div')`
 type TriggerStyleProps = { x: number; isSwiping: boolean };
 
 const Trigger = styled('div').attrs<TriggerStyleProps>(props => ({
-  transform: `translateX(${props.x}px)`,
+  style: {
+    transform: `translateX(${props.x}px)`,
+  },
 }))<TriggerStyleProps>`
   touch-action: pan-y;
   transition: ${props => (props.isSwiping ? 'none' : '0.1s')};
@@ -165,9 +184,15 @@ const TriggerButton = styled(Button as React.FunctionComponent<ButtonProps>)`
   }
 `;
 
-const ActionButton = styled(ListRow)<
-  Pick<ActionButtonProps, 'color' | 'backgroundColor'> & { align: 'left' | 'right' }
->`
+type StyledActionButtonProps = Pick<
+  ActionButtonProps,
+  'color' | 'backgroundColor'
+> & {
+  align: 'left' | 'right';
+};
+
+const ActionButton = styled(ListRow)<StyledActionButtonProps>`
+  ${(props: StyledActionButtonProps) => ``};
   background-color: ${props => props.backgroundColor};
   color: ${props => props.color};
   width: 100%;
@@ -181,4 +206,17 @@ const ActionButton = styled(ListRow)<
   box-shadow: inset 0 8px 6px -8px rgba(0, 0, 0, 0.2);
   justify-content: ${props =>
     props.align === 'left' ? 'flex-start' : 'flex-end'};
-`;
+` as React.FunctionComponent<StyledActionButtonProps>;
+
+type StyledCircularProgressProps = CircularProgressProps & {
+  colorStyle: string;
+};
+const StyledCircularProgress = styled(CircularProgress).attrs({})<
+  StyledCircularProgressProps
+>`
+  && {
+    color: ${props => props.colorStyle};
+    width: 30px !important;
+    height: 30px !important;
+  }
+` as React.FunctionComponent<StyledCircularProgressProps>;

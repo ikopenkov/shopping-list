@@ -23,11 +23,20 @@ import FormControlLabel, {
   FormControlLabelProps,
 } from '@material-ui/core/FormControlLabel';
 import RemoveIcon from '@material-ui/icons/Remove';
+import { DialogRenderer, IDialogProps } from 'utils/DialogRenderer';
 
-type OwnProps = {
+/**
+ *
+ * TODO: use formik or final-form or redux-form for validation
+ *
+ */
+
+type NeedProps = {
   listId: string;
   purchaseId: string;
 };
+
+type OwnProps = IDialogProps & NeedProps;
 
 const connector = connect(
   (state: GlobalState, ownProps: OwnProps) => ({
@@ -108,6 +117,7 @@ class Component extends React.PureComponent<Props, State> {
       );
 
       this.setState({ isRequesting: false });
+      this.close();
     }
   };
 
@@ -170,6 +180,11 @@ class Component extends React.PureComponent<Props, State> {
     this.setState({
       isRequesting: false,
     });
+    this.close();
+  };
+
+  private close = () => {
+    this.props.onClose();
   };
 
   render() {
@@ -178,8 +193,9 @@ class Component extends React.PureComponent<Props, State> {
         classes={{
           paper: 'paper',
         }}
-        open={true}
-        // onClose={this.handleClose}
+        open={this.props.isOpened}
+        onClose={this.close}
+        onEscapeKeyDown={this.close}
       >
         <form onSubmit={this.handleSubmit}>
           <StyledDialogContent>
@@ -265,6 +281,7 @@ class Component extends React.PureComponent<Props, State> {
                     !!this.state.numberError || !this.state.purchaseName.length
                   }
                   color="primary"
+                  onClick={this.close}
                 >
                   Cancel
                 </Button>
@@ -285,7 +302,8 @@ class Component extends React.PureComponent<Props, State> {
     );
   }
 }
-export const PurchaseEditingDialog = connector(Component);
+
+const PurchaseEditingDialog = connector(Component);
 
 const StyledDialog = styled(Dialog as React.FunctionComponent<DialogProps>)`
   & .paper {
@@ -341,3 +359,9 @@ const NumberField = styled(TextField as React.FunctionComponent<any>)`
     margin: 8px -35px 0;
   }
 `;
+
+export const renderPurchaseEditingDialog = (dialogComponentProps: NeedProps) =>
+  DialogRenderer.renderDialog({
+    DialogComponent: PurchaseEditingDialog,
+    dialogComponentProps,
+  });

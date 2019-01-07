@@ -14,11 +14,13 @@ export const Purchase = ({
   markBought,
   deletePurchase,
   unmarkBought,
+  onClick,
 }: {
   purchase: PurchaseEntry;
   markBought: () => Promise<any>;
   deletePurchase: () => Promise<any>;
   unmarkBought: () => Promise<any>;
+  onClick: () => any;
 }) => {
   return (
     <PurchaseWrapper>
@@ -37,6 +39,7 @@ export const Purchase = ({
           content: purchase.bought ? <UndoIcon /> : <DoneIcon />,
           action: purchase.bought ? unmarkBought : markBought,
         }}
+        onClick={onClick}
       >
         <PurchaseContent bought={purchase.bought}>
           <Name>{purchase.name}</Name>

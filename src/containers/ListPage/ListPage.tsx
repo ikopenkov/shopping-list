@@ -11,6 +11,7 @@ import { Loader } from 'components/Loader/Loader';
 import { Purchase } from 'containers/ListPage/Components/Purchase';
 import { ListSelectors } from 'modules/ListModule/ListSelectors';
 import { PurchaseAddingForm } from 'containers/PurchaseAddingForm/PurchaseAddingForm';
+import { renderPurchaseEditingDialog } from 'containers/PurchaseEditingDialog/PurchaseEditingDialog';
 // import { PurchaseEditingDialog } from 'containers/PurchaseEditingDialog/PurchaseEditingDialog';
 
 type OwnProps = RouteComponentProps<{ id: string }> & {};
@@ -66,16 +67,12 @@ class Component extends React.PureComponent<Props> {
       <React.Fragment>
         <PurchaseAddingForm listId={this.props.item._id} />
         {this.renderPurchases()}
-        {/*<PurchaseEditingDialog*/}
-        {/*listId={this.props.item._id}*/}
-        {/*purchaseId={this.props.item.purchases[0]._id}*/}
-        {/*/>*/}
       </React.Fragment>
     );
   };
 
-  private renderPurchases = () => {
-    return this.props.item.purchases.map(purchase => (
+  private renderPurchases = () =>
+    this.props.item.purchases.map(purchase => (
       <Purchase
         purchase={purchase}
         key={purchase._id}
@@ -92,8 +89,15 @@ class Component extends React.PureComponent<Props> {
             bought: false,
           })
         }
+        onClick={() => this.handlePurchaseClick(purchase._id)}
       />
     ));
+
+  private handlePurchaseClick = (purchaseId: string) => {
+    renderPurchaseEditingDialog({
+      listId: this.props.item._id,
+      purchaseId,
+    });
   };
 
   render() {
